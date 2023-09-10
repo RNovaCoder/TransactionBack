@@ -1,0 +1,18 @@
+
+{
+  "audioConfig": {
+    "audioEncoding": "MP3",
+    "effectsProfileId": [
+      "large-home-entertainment-class-device"
+    ],
+    "pitch": -2,
+    "speakingRate": 1.11
+  },
+  "input": {
+    "ssml": ""
+  },
+  "voice": {
+    "languageCode": "es-US",
+    "name": "es-US-Wavenet-B"
+  }
+}
