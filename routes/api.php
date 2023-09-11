@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\UsuarioControlador;
+use App\Http\Controllers\Api\TransaccionControlador;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,8 +13,20 @@ use Illuminate\Support\Facades\Route;
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "api" middleware group. Make something great!
 |
-*/
+*/ 
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post("usuario/registrar", [UsuarioControlador::class, 'usuario_registrar']);
+
+Route::group( ['middleware' => ["auth:sanctum"]], function(){   
+
+    //Route::post("{$dir_api_usuario}autenticar", [UsuarioControlador::class, 'autenticar']);
+    Route::post("usuario/cerrar.sesion", [UsuarioControlador::class, 'cerrar_sesion']);
+    Route::post("usuario/eliminar.usuario", [UsuarioControlador::class, 'eliminar_usuario']);
+    Route::post("usuario/cerrar.sesiones", [UsuarioControlador::class, 'cerrar_sesiones']);
+
+    Route::post('transaccion/registrar', [TransaccionControlador::class, 'registrar']);
+    Route::post('transaccion/reset.data', [TransaccionControlador::class, 'resetear']);
+    Route::post('transaccion/obtener', [TransaccionControlador::class, 'obtener']);
+    Route::post('transaccion/limpiar.registros', [TransaccionControlador::class, 'limpiar_registros']);
+
 });
