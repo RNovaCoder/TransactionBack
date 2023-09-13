@@ -11,13 +11,9 @@
 |
 */
 
-use App\Helpers\Constants;
-
 $app = new Illuminate\Foundation\Application(
     $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
 );
-
-Constants::inicializar();
 
 /*
 |--------------------------------------------------------------------------
