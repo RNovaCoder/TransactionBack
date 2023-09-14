@@ -10,8 +10,8 @@ class Constants {
 
     public static function inicializar()
     {
-        self::$KEY_TEXT_SPEECH_GOOGLE = env('KEY_TEXT_TO_SPEECH');
-        self::$TOKEN_GENERAL = env('KEY_APP_GENERAL');
+        self::$KEY_TEXT_SPEECH_GOOGLE = config('services.googletextspeech');
+        self::$TOKEN_GENERAL = config('app.tokengeneral');
     }
 
 }

@@ -185,4 +185,7 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+    'tokengeneral' => env('KEY_APP_GENERAL')
+
+
 ];

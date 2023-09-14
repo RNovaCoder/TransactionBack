@@ -37,4 +37,6 @@ return [
         'redirect' => '/google-callback',
     ],
     
+    'googletextspeech' => env('KEY_TEXT_TO_SPEECH')
+
 ];
