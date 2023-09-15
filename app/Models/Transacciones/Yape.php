@@ -18,22 +18,19 @@ class Yape extends Model
 
     static public function crear_tabla($id_tabla)
     {
-
         Schema::create($id_tabla, function ($tabla) {
             $tabla->bigIncrements('_id');
             $tabla->bigInteger('transaccion_id');
             $tabla->decimal('monto', 10, 2);;
             $tabla->string('nombre');
             $tabla->dateTime('fecha');
+            $tabla->string('fecha_visual');
             $tabla->string('mensaje')->nullable();;
         });
     }
 
-
-
     static public function crear_resgitro($request, $id_tabla)
     {
-
         //Si no pasa la validación devolverá un erro de validación 500
         Self::validar_data($request, $id_tabla);
 
@@ -44,13 +41,13 @@ class Yape extends Model
         $tabla->monto          = $request->monto;
         $tabla->fecha          = $request->fecha;
         $tabla->mensaje        = $request->mensaje ?? null;
+        $tabla->fecha_visual    = Utils::formatDateVisual(Utils::formatDateInverse($request->fecha));
 
         return $tabla;
     }
 
     static public function validar_data($request, $id_tabla)
     {
-
         $request->validate([
             'transaccion_id' => "required|numeric|unique:{$id_tabla},transaccion_id",
             'nombre' => 'required|string|alpha_spaces',
@@ -82,19 +79,20 @@ class Yape extends Model
                 $monto = $fila[3];
                 $id = $count;
                 $mensaje = null;
+                $fecha_visual = Utils::formatDateVisual(end($fila));
 
                 $dataToInsert[] = [
                     'transaccion_id' => $id,
                     'monto' => $monto,
                     'nombre' => $nombre,
                     'fecha' => $fecha,
-                    'mensaje' => $mensaje
+                    'mensaje' => $mensaje,
+                    'fecha_visual' => $fecha_visual
                 ];
 
                 $count = $count + 1;
             }
         }
-
         return $dataToInsert;
     }
 
@@ -102,7 +100,6 @@ class Yape extends Model
     {
         $this->table = $table;
     }
-
 
     public $timestamps = false;
 }
