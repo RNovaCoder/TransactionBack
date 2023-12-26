@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\BD;
 use App\Helpers\Text_speech;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 
 class TransaccionControlador extends Controller
 {
@@ -63,15 +64,34 @@ class TransaccionControlador extends Controller
         y la crea sino existe*/
         BD::crear_tabla($id_tabla, $request);
 
-        BD::vaciar_tabla($id_tabla, $bd);
+        $error = "";
+        $code = 0;
+        DB::beginTransaction();
 
-        $dataToInsert = BD::to_data_reset($request);
-
-        BD::insertar_registros($id_tabla, $dataToInsert);
-
+        try {
+            //$ultima_trans = BD::ultima_transaccion($id_tabla);
+            $dataToInsert = BD::to_data_reset($request);
+            if (count($dataToInsert) > 0) {
+                BD::eliminar_data_not($id_tabla);
+                BD::insertar_registros($id_tabla, $dataToInsert);
+                $message = "Datos actualizados correctamente";
+                $code = 1;
+            }
+            else {
+                $message = "Datos envíados vacíos, con formato erróneo o repetidos";
+            }
+            DB::commit();
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            $error = $e -> getMessage();
+            $message = "CSV Inválido, revisa el formato";
+        }
+        
         return response()->json([
-            "message" => "Datos Enviado e Insertados",
-            "status" => 1,
+            "message" => $message,
+            "status" => $code,
+            'error' => $error
         ]);
     
     }
@@ -93,7 +113,9 @@ class TransaccionControlador extends Controller
         y la crea sino existe*/
         BD::crear_tabla($id_tabla, $request);
 
-        $Transacciones = BD::obtener_transacciones($id_tabla);
+        //Si no envía una cantidad de meses explícito será 5 meses por default
+        $meses = $request->input('meses');
+        $Transacciones = BD::obtener_transacciones($id_tabla, $meses);
 
         return response()->json($Transacciones, 200); 
     }

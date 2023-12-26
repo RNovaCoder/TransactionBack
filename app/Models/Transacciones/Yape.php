@@ -19,13 +19,11 @@ class Yape extends Model
     static public function crear_tabla($id_tabla)
     {
         Schema::create($id_tabla, function ($tabla) {
-            $tabla->bigIncrements('_id');
-            $tabla->bigInteger('transaccion_id');
+            $tabla->string('_id', 80)->unique();
             $tabla->decimal('monto', 10, 2);;
             $tabla->string('nombre');
             $tabla->dateTime('fecha');
             $tabla->string('fecha_visual');
-            $tabla->string('mensaje')->nullable();;
         });
     }
 
@@ -36,11 +34,11 @@ class Yape extends Model
 
         //Pasó la validación, creará la data
         $tabla = new Yape($id_tabla);
-        $tabla->transaccion_id = $request->transaccion_id;
+
+        $tabla->_id            = $request->transaccion_id;
         $tabla->nombre         = $request->nombre;
         $tabla->monto          = $request->monto;
         $tabla->fecha          = $request->fecha;
-        $tabla->mensaje        = $request->mensaje ?? null;
         $tabla->fecha_visual    = Utils::formatDateVisual(Utils::formatDateInverse($request->fecha));
 
         return $tabla;
@@ -48,19 +46,30 @@ class Yape extends Model
 
     static public function validar_data($request, $id_tabla)
     {
+
         $request->validate([
-            'transaccion_id' => "required|numeric|unique:{$id_tabla},transaccion_id",
             'nombre' => 'required|string|alpha_spaces',
             'monto' => 'required|string|numeric|flotante',
             'fecha' => 'required|string|formato_fecha',
         ]);
+
+        $id_num = intval($request->transaccion_id/1000);
+
+        for ($i=-3; $i < 4; $i = $i + 3) {
+            $id_num = $id_num + abs($i) - 2;
+            $id = 'cel-' . hash('sha256', ucwords(strtolower($request->nombre)) . $request->monto . $id_num);
+            $request->merge(['transaccion_id' => $id]);
+            $request->validate([
+                'transaccion_id' => "required|string|unique:{$id_tabla},_id"
+            ]);
+        }
+        
     }
 
     static public function reset_data($request)
     {
-
-        $cvsData = $request->getContent();
-        $filas = explode("\\n", $cvsData); // Separamos las filas por salto de línea
+        $cvsData = $request->csvContent;
+        $filas = explode("\n", $cvsData); // Separamos las filas por salto de línea
         $datos = [];
 
         // Recorrer las filas y obtener los valores
@@ -69,7 +78,7 @@ class Yape extends Model
         }
 
         $dataToInsert = [];
-        $count = 0;
+
         foreach ($datos as $fila) {
 
             if ($fila[0] == "TE PAGÓ") {
@@ -77,28 +86,30 @@ class Yape extends Model
                 $fecha = Utils::formatDate(end($fila));
                 $nombre = ucwords(strtolower($fila[1]));
                 $monto = $fila[3];
-                $id = $count;
-                $mensaje = null;
+                $id = hash('sha256', $nombre . $monto . $fecha);
                 $fecha_visual = Utils::formatDateVisual(end($fila));
 
                 $dataToInsert[] = [
-                    'transaccion_id' => $id,
+                    '_id' => $id,
                     'monto' => $monto,
                     'nombre' => $nombre,
                     'fecha' => $fecha,
-                    'mensaje' => $mensaje,
                     'fecha_visual' => $fecha_visual
                 ];
-
-                $count = $count + 1;
             }
         }
+
         return $dataToInsert;
     }
 
-    public function __construct($table)
+    public function __construct($table = '')
     {
         $this->table = $table;
+    }
+
+    public static function table_id_set($table)
+    {
+        Self::$table = $table;
     }
 
     public $timestamps = false;

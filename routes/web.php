@@ -1,9 +1,9 @@
 <?php
-
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Api\UsuarioControlador;
 use App\Http\Controllers\AppTransaction;
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,7 +20,21 @@ use Illuminate\Support\Facades\Route;
 Route::get('/google-login', [UsuarioControlador::class, 'google_login'])->name('login');
 Route::get('/google-callback', [UsuarioControlador::class, 'google_login']);
 
+Route::get('/', function () {
+    return redirect('/yapefy');
+});
+
+
 
 Route::middleware(['cookauth'])->group(function () {
-    Route::get('/transaction.app', [AppTransaction::class, 'app_index'])->name('index');
+    Route::get("/usuario/cerrar.sesion", [UsuarioControlador::class, 'cerrar_sesion']);
+
+    Route::get('/yapefy{any?}', function () {
+        return view('yapefy');
+    })->where('any', '.*')->name('index');
+
+    Route::get('/welcome', function () {
+        return view('logout');
+    });
+
 });

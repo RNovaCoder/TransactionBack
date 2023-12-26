@@ -829,23 +829,90 @@
             }
         }
     </style>
+    <script>
+        class Router {
+            static hotsLocal = 'http://localhost:8000'
+            static hostProduccion = 'https://yape.webprized.com'
+            static host = this.hotsLocal
+
+            static urlObtenerData = this.host + '/api/transaccion/obtener'
+            static urlCerrarSesion = this.host + '/api/usuario/cerrar.sesion'
+            static urlResetData = this.host + '/api/transaccion/reset.data'
+            static urlGetUser = this.host + '/api/usuario/autenticar'
+
+            static token_Ricardo = '210|mWvr8jwnSmICqxHIUF7sTdzQ2Rm1T6Tb1VcEF7XM1c73b8f3'
+
+            static token_Isabel = '127|HFtXl05TGF0QGKI9iKjJ1R3Xm89NmpjLVYC8c4lsd6028d8f'
+
+
+            static headers = new Headers({
+                'Content-Type': 'application/json',
+            })
+
+            requestOptions = {
+                method: 'POST', // Método HTTP
+                headers: Router.headers, // Encabezados personalizados
+                body: "" // Cuerpo de la solicitud en formato JSON
+            }
+
+            constructor() {}
+
+            async fetchData() {
+                const data = {
+                    tipo: "Yape"
+                }
+                this.requestOptions.body = JSON.stringify(data)
+                const response = await fetch(Router.urlObtenerData, this.requestOptions)
+                const dataRecibida = await response.json()
+                return dataRecibida
+            }
+
+            async resetData(contentData) {
+                const data = {
+                    tipo: "Yape",
+                    csvContent: contentData
+                }
+                this.requestOptions.body = JSON.stringify(data)
+                const response = await fetch(Router.urlResetData, this.requestOptions)
+                const dataRecibida = await response.json()
+                return dataRecibida
+            }
+
+            async requestGeneric(url) {
+                const response = await fetch(url, this.requestOptions)
+                const dataRecibida = await response.text()
+                return dataRecibida
+            }
+
+            async getUser() {
+                const response = await fetch(Router.urlGetUser, this.requestOptions)
+                const dataRecibida = await response.json()
+                return dataRecibida
+            }
+
+            async logOut() {
+                const response = await fetch(Router.urlCerrarSesion, this.requestOptions)
+                const dataRecibida = await response.json()
+                return dataRecibida
+            }
+
+        }
+    </script>
+    <script>
+        const router = new Router()
+        const logout = () => {
+            router.logOut()
+        }
+    </script>
 </head>
 
 <body class="antialiased">
     <div class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-red-500 selection:text-white">
-        @if (Route::has('login'))
         <div class="sm:fixed sm:top-0 sm:right-0 p-6 text-right z-10">
-            @auth
-            <a href="{{ url('/home') }}" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Home</a>
-            @else
-            <a href="{{ route('login') }}" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Log in</a>
+            <a href="{{ url('usuario/cerrar.sesion') }}" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Logout</a>
+            <a href="{{ url('/google-login') }}" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Login</a>
 
-            @if (Route::has('register'))
-            <a href="{{ route('register') }}" class="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Register</a>
-            @endif
-            @endauth
         </div>
-        @endif
 
         <div class="max-w-7xl mx-auto p-6 lg:p-8">
             <div class="flex justify-center">

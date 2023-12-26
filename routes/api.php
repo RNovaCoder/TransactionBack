@@ -17,11 +17,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::post("usuario/registrar", [UsuarioControlador::class, 'usuario_registrar']);
 
-Route::group( ['middleware' => ["auth:sanctum"]], function(){   
+Route::group( ['middleware' => ['cookauth']], function(){   
 
     //Route::post("{$dir_api_usuario}autenticar", [UsuarioControlador::class, 'autenticar']);
-    Route::post("usuario/cerrar.sesion", [UsuarioControlador::class, 'cerrar_sesion']);
     Route::post("usuario/eliminar.usuario", [UsuarioControlador::class, 'eliminar_usuario']);
+    Route::post("usuario/autenticar", [UsuarioControlador::class, 'autenticar']);
     Route::post("usuario/cerrar.sesiones", [UsuarioControlador::class, 'cerrar_sesiones']);
 
     Route::post('transaccion/registrar', [TransaccionControlador::class, 'registrar']);
