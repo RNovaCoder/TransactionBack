@@ -37,7 +37,7 @@ class Utils {
         
         $meses = array("Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic");
         
-        $dia = intval (substr ($date, 0, 2));
+        $dia = substr ($date, 0, 2);
         $mes = substr ($date, 3, 2);
         $año = substr ($date, 6, 4);
         $hora = intval(substr ($date, 11, 2));
