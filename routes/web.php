@@ -20,21 +20,31 @@ use Illuminate\Http\Request;
 Route::get('/google-login', [UsuarioControlador::class, 'google_login'])->name('login');
 Route::get('/google-callback', [UsuarioControlador::class, 'google_login']);
 
-Route::get('/', function () {
-    return redirect('/yapefy');
-});
-
 
 
 Route::middleware(['cookauth'])->group(function () {
     Route::get("/usuario/cerrar.sesion", [UsuarioControlador::class, 'cerrar_sesion']);
 
-    Route::get('/yapefy{any?}', function () {
+    Route::get('/app{any?}', function () {
         return view('yapefy');
-    })->where('any', '.*')->name('index');
+    })->where('any', '.*')->name('appYapefy');
 
     Route::get('/welcome', function () {
         return view('logout');
     });
 
+    
+});
+
+Route::get('/', function () {
+    return view('web.inicio');
+});
+Route::get('/instrucciones', function () {
+    return view('web.instrucciones');
+});
+Route::get('/privacidad', function () {
+    return view('web.privacidad');
+});
+Route::get('/condiciones', function () {
+    return view('web.condiciones');
 });

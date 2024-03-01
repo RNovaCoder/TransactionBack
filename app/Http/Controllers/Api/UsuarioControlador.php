@@ -46,7 +46,7 @@ class UsuarioControlador extends Controller
         //Registra al usuario si no existe y devuelve un token de autenticación
         $token = Self::registrar($google_user);
 
-        $response = redirect()->route('index');
+        $response = redirect()->route('appYapefy');
         $cookie = cookie($COOKIE_SESSION, $token, 525600);
         $response->withCookie($cookie);
 
@@ -112,7 +112,7 @@ class UsuarioControlador extends Controller
         } catch (\Throwable $th) {
         }
         
-        return redirect('/yapefy');
+        return redirect('/');
     }
 
     public function cerrar_sesiones(Request $request)
