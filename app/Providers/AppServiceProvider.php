@@ -22,10 +22,11 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         Validator::extend('alpha_spaces', function ($attribute, $value) {
-            return preg_match('/^[\pL\s\-]+$/u', $value);
+            return preg_match('/^[\pL\s\.\-]+$/u', $value);
         });
+        
         Validator::replacer('alpha_spaces', function ($message, $attribute, $rule, $parameters) {
-            return 'El campo nombre sólo debe contener letras y espacios.';
+            return 'El campo nombre sólo debe contener letras, guiones, puntos y espacios.';
         });
 
         Validator::extend('formato_fecha', function ($attribute, $value) {
